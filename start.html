@@ -1,0 +1,467 @@
+<!DOCTYPE html><html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MD ABUSALEH SK GAME</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --panel:#111827ee;     /* gray-900 */
+      --card:#0b1220cc;      
+      --text:#e5e7eb;        /* gray-200 */
+      --muted:#9ca3af;       /* gray-400 */
+      --accent:#22d3ee;      /* cyan-400 */
+      --win:#22c55e;         /* green-500 */
+      --loss:#ef4444;        /* red-500 */
+      --draw:#f59e0b;        /* amber-500 */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .light{
+      --bg:#f8fafc;          /* slate-50 */
+      --panel:#ffffffee;
+      --card:#ffffffcc;
+      --text:#0f172a;        /* slate-900 */
+      --muted:#475569;       /* slate-600 */
+      --accent:#0ea5e9;      /* sky-500 */
+      --win:#16a34a;
+      --loss:#dc2626;
+      --draw:#d97706;
+      --shadow: 0 10px 30px rgba(2,6,23,.12);
+    }*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  transition: background .4s ease, color .3s ease;
+}
+
+/* Animated rainbow gradient option */
+.bg-rainbow{ 
+  background: linear-gradient(120deg,#0ea5e9, #8b5cf6, #f43f5e, #22c55e, #eab308, #06b6d4);
+  background-size: 400% 400%;
+  animation: rainbow 18s ease infinite;
+}
+@keyframes rainbow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.container{ max-width:1100px; margin:0 auto; padding:20px; }
+header{ display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+.title{ font-weight:800; letter-spacing:.3px; display:flex; align-items:center; gap:8px; }
+.title span.small{ font-weight:600; font-size:.9rem; color:var(--muted)}
+
+.panel{ background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:16px; box-shadow: var(--shadow); }
+
+.controls{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; align-items:end; }
+label{ font-size:.85rem; color:var(--muted); display:block; margin:0 0 6px; }
+input[type="text"], select, input[type="url"]{
+  width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.1);
+  background:var(--card); color:var(--text); outline:none; box-shadow: inset 0 0 0 9999px rgba(255,255,255,.02);
+}
+.row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.btn{ cursor:pointer; border:0; border-radius:14px; padding:10px 14px; font-weight:700; background:var(--accent); color:#031018; box-shadow: var(--shadow); transition: transform .04s ease; }
+.btn:active{ transform: translateY(1px) }
+.btn.ghost{ background: transparent; color: var(--text); border:1px solid rgba(255,255,255,.14) }
+
+.board-wrap{ margin-top:18px; display:grid; grid-template-columns: 1fr 320px; gap:16px; }
+@media (max-width: 960px){ .board-wrap{ grid-template-columns: 1fr } }
+
+.board{ aspect-ratio:1/1; display:grid; grid-template-columns: repeat(3,1fr); gap:10px; background:transparent; }
+.cell{ position:relative; background:var(--card); border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:clamp(32px, 8vw, 58px); font-weight:900; user-select:none; cursor:pointer; box-shadow: var(--shadow); }
+.cell.disabled{ cursor:not-allowed; opacity:.7 }
+.cell.win{ outline:3px solid var(--win) }
+
+.sidebar{ display:grid; gap:12px }
+
+.status{ padding:12px; border-radius:16px; background:var(--card); border:1px solid rgba(255,255,255,.08) }
+.status .who{ font-weight:800 }
+
+.score{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px }
+.score .card{ background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:12px; text-align:center; box-shadow: var(--shadow)}
+.score .n{ font-weight:800 }
+.score .v{ font-size:1.6rem; font-weight:900 }
+
+.history{ background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:12px }
+.history ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; max-height:220px; overflow:auto }
+.history li{ display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,.03); font-size:.95rem }
+
+.badge{ padding:2px 8px; border-radius:999px; font-size:.78rem; font-weight:800; }
+.b-win{ background:rgba(34,197,94,.18); color:var(--win) }
+.b-loss{ background:rgba(239,68,68,.18); color:var(--loss) }
+.b-draw{ background:rgba(245,158,11,.18); color:var(--draw) }
+
+footer{ opacity:.8; font-size:.85rem; text-align:center; margin-top:16px }
+.hidden{ display:none !important }
+
+  </style>
+</head>
+<body class="light" id="body">
+  <div id="bgLayer"></div>
+  <div class="container">
+    <header>
+      <div class="title">
+        <span style="font-size:1.8rem">MD ABUSALEH SK 🎮</span>
+        <span class="small">বাংলা + English • AI • Names • Scores • Dark/Light</span>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="themeBtn" title="ডার্ক/লাইট">🌙/☀️</button>
+        <button class="btn ghost" id="resetAllBtn" title="সব রিসেট">♻️ Reset All</button>
+      </div>
+    </header><section class="panel" aria-label="Game Controls & Options">
+  <div class="controls">
+    <div>
+      <label>Player X নাম (বাংলা/English)</label>
+      <input id="nameX" type="text" placeholder="e.g., সোহান / Sohan" />
+    </div>
+    <div>
+      <label>Player o নাম (বা AI)</label>
+      <input id="nameO" type="text" placeholder="e.g., মায়া / Maya" />
+    </div>
+    <div>
+      <label>মোড / Mode</label>
+      <select id="mode">
+        <option value="pvp">👥 Player vs Player</option>
+        <option value="pve-easy">🤖 Player vs AI (Easy)</option>
+        <option value="pve-hard">🧠 Player vs AI (Hard)</option>
+      </select>
+    </div>
+    <div>
+      <label>ব্যাকগ্রাউন্ড / Background</label>
+      <select id="bgSelect">
+        <option value="solid">Solid (theme)</option>
+        <option value="rainbow">Animated Rainbow</option>
+        <option value="image">Custom Image (below)</option>
+        <option value="gradient">Colorful Gradient</option>
+      </select>
+    </div>
+    <div>
+      <label>Image URL (optional)</label>
+      <input id="bgUrl" type="url" placeholder="https://example.com/image.jpg" />
+    </div>
+    <div class="row">
+      <button id="startBtn" class="btn">▶️ Start / Restart</button>
+      <button id="clearScoresBtn" class="btn ghost">🧹 Clear Scores</button>
+    </div>
+  </div>
+</section>
+
+<section class="board-wrap">
+  <div class="panel" id="boardPanel">
+    <div id="board" class="board" role="grid" aria-label="Tic Tac Toe Board">
+      <div class="cell" data-idx="0" role="gridcell" aria-label="cell 1"></div>
+      <div class="cell" data-idx="1" role="gridcell" aria-label="cell 2"></div>
+      <div class="cell" data-idx="2" role="gridcell" aria-label="cell 3"></div>
+      <div class="cell" data-idx="3" role="gridcell" aria-label="cell 4"></div>
+      <div class="cell" data-idx="4" role="gridcell" aria-label="cell 5"></div>
+      <div class="cell" data-idx="5" role="gridcell" aria-label="cell 6"></div>
+      <div class="cell" data-idx="6" role="gridcell" aria-label="cell 7"></div>
+      <div class="cell" data-idx="7" role="gridcell" aria-label="cell 8"></div>
+      <div class="cell" data-idx="8" role="gridcell" aria-label="cell 9"></div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="status">
+      <div id="labelNames" style="font-weight:700; margin-bottom:6px">Ready?</div>
+      <div>Turn: <span class="who" id="turnWho">—</span></div>
+      <div id="resultLine" style="margin-top:6px; font-weight:700"></div>
+    </div>
+
+    <div class="score">
+      <div class="card">
+        <div class="n" id="nameXLabel">X</div>
+        <div class="v" id="scoreX">0</div>
+      </div>
+      <div class="card">
+        <div class="n" id="nameOLabel">O</div>
+        <div class="v" id="scoreO">0</div>
+      </div>
+      <div class="card">
+        <div class="n">Draw</div>
+        <div class="v" id="scoreD">0</div>
+      </div>
+    </div>
+
+    <div class="history">
+      <div style="font-weight:800; margin-bottom:8px">Match History</div>
+      <ul id="historyList"></ul>
+    </div>
+  </aside>
+</section>
+
+<footer>
+  Pro tip: Hard AI uses <strong>minimax</strong> (perfect play). Easy AI makes smart-but-random moves.
+</footer>
+
+  </div><script>
+(function(){
+  const body = document.getElementById('body');
+  const themeBtn = document.getElementById('themeBtn');
+  const resetAllBtn = document.getElementById('resetAllBtn');
+  const startBtn = document.getElementById('startBtn');
+  const clearScoresBtn = document.getElementById('clearScoresBtn');
+  const nameXInput = document.getElementById('nameX');
+  const nameOInput = document.getElementById('nameO');
+  const modeSelect = document.getElementById('mode');
+  const bgSelect = document.getElementById('bgSelect');
+  const bgUrl = document.getElementById('bgUrl');
+  const boardEl = document.getElementById('board');
+  const cells = [...document.querySelectorAll('.cell')];
+  const labelNames = document.getElementById('labelNames');
+  const turnWho = document.getElementById('turnWho');
+  const resultLine = document.getElementById('resultLine');
+  const scoreX = document.getElementById('scoreX');
+  const scoreO = document.getElementById('scoreO');
+  const scoreD = document.getElementById('scoreD');
+  const nameXLabel = document.getElementById('nameXLabel');
+  const nameOLabel = document.getElementById('nameOLabel');
+  const historyList = document.getElementById('historyList');
+
+  const WIN_LINES = [
+    [0,1,2],[3,4,5],[6,7,8], // rows
+    [0,3,6],[1,4,7],[2,5,8], // cols
+    [0,4,8],[2,4,6]          // diags
+  ];
+
+  let state = {
+    board: Array(9).fill(null),
+    xTurn: true,
+    playing: false,
+    names: {X:'X', O:'O'},
+    mode: 'pvp',
+    scores: {X:0,O:0,D:0},
+    theme: 'light',
+    bg: 'solid',
+    bgImage: ''
+  };
+
+  // Load from localStorage
+  const storeKey = 'deluxe-ttt-v2';
+  try{
+    const saved = JSON.parse(localStorage.getItem(storeKey)||'null');
+    if(saved){ state = {...state, ...saved}; applyTheme(); applyBackground(); renderScores(); setNameLabels(); }
+  }catch(e){}
+
+  function save(){ localStorage.setItem(storeKey, JSON.stringify({
+    scores: state.scores,
+    theme: state.theme,
+    bg: state.bg,
+    bgImage: state.bgImage,
+    names: state.names,
+    mode: state.mode
+  })); }
+
+  function setNameLabels(){
+    nameXLabel.textContent = state.names.X || 'X';
+    nameOLabel.textContent = state.mode.startsWith('pve') ? `${state.names.O||'AI'} 🤖` : (state.names.O||'O');
+    labelNames.textContent = `${state.names.X||'X'} (X) vs ${state.mode.startsWith('pve')? (state.names.O||'AI 🤖') : (state.names.O||'O')} (O)`;
+  }
+
+  function applyTheme(){
+    if(state.theme==='light'){ body.classList.add('light'); }
+    else { body.classList.remove('light'); }
+  }
+
+  function applyBackground(){
+    document.body.style.background = '';
+    document.body.classList.remove('bg-rainbow');
+    if(state.bg==='solid'){
+      // default theme color via CSS var --bg
+    } else if(state.bg==='rainbow'){
+      document.body.classList.add('bg-rainbow');
+    } else if(state.bg==='gradient'){
+      document.body.style.background = 'radial-gradient(1200px 600px at 10% 10%, rgba(34,211,238,.25), transparent), radial-gradient(1000px 500px at 90% 20%, rgba(139,92,246,.22), transparent), radial-gradient(800px 400px at 50% 100%, rgba(244,63,94,.18), transparent), var(--bg)';
+    } else if(state.bg==='image' && state.bgImage){
+      document.body.style.background = `url('${state.bgImage}') center/cover fixed no-repeat`;
+    }
+  }
+
+  function resetBoard(){
+    state.board = Array(9).fill(null);
+    state.xTurn = true;
+    state.playing = true;
+    resultLine.textContent='';
+    turnWho.textContent = whoName();
+    cells.forEach(c=>{ c.textContent=''; c.classList.remove('disabled','win'); });
+  }
+
+  function whoName(){ return (state.xTurn? state.names.X||'X' : (state.mode.startsWith('pve')? (state.names.O||'AI') : (state.names.O||'O'))); }
+
+  function winner(b){
+    for(const [a,b1,c] of WIN_LINES){
+      if(b[a] && b[a]===b[b1] && b[a]===b[c]) return {mark:b[a], line:[a,b1,c]};
+    }
+    if(b.every(x=>x)) return {mark:null, draw:true};
+    return null;
+  }
+
+  function bestMoveMinimax(b, aiMark){
+    const human = aiMark==='O' ? 'X':'O';
+    function mm(board, player){
+      const win = winner(board);
+      if(win){
+        if(win.draw) return 0;
+        return (win.mark===aiMark) ? 1 : -1;
+      }
+      const avail = board.map((v,i)=>v?null:i).filter(i=>i!==null);
+      if(player===aiMark){
+        let best=-Infinity;
+        for(const i of avail){
+          board[i]=player;
+          best=Math.max(best, mm(board, human));
+          board[i]=null;
+        }
+        return best;
+      }else{
+        let best=Infinity;
+        for(const i of avail){
+          board[i]=player;
+          best=Math.min(best, mm(board, aiMark));
+          board[i]=null;
+        }
+        return best;
+      }
+    }
+    let move=-1, best=-Infinity;
+    const avail = b.map((v,i)=>v?null:i).filter(i=>i!==null);
+    for(const i of avail){
+      b[i]=aiMark;
+      const score = mm(b, human);
+      b[i]=null;
+      if(score>best){ best=score; move=i; }
+    }
+    return move;
+  }
+
+  function aiMove(){
+    const mark = 'O';
+    const board = state.board;
+    const emptyIdxs = board.map((v,i)=>v?null:i).filter(i=>i!==null);
+    if(emptyIdxs.length===0) return;
+    let idx;
+    if(state.mode==='pve-easy'){
+      // try win, block, else random
+      idx = findWinOrBlock(board, mark) ?? findWinOrBlock(board, 'X') ?? emptyIdxs[Math.floor(Math.random()*emptyIdxs.length)];
+    } else { // hard
+      idx = bestMoveMinimax([...board], mark);
+      if(idx===-1) idx = emptyIdxs[0];
+    }
+    place(idx);
+  }
+
+  function findWinOrBlock(b, m){
+    for(const [a,b1,c] of WIN_LINES){
+      const line=[b[a],b[b1],b[c]];
+      const idxs=[a,b1,c];
+      if(line.filter(v=>v===m).length===2 && line.includes(null)){
+        return idxs[line.indexOf(null)];
+      }
+    }
+    return null;
+  }
+
+  function place(idx){
+    if(!state.playing) return;
+    if(state.board[idx]) return; // occupied
+    const mark = state.xTurn ? 'X':'O';
+    state.board[idx]=mark;
+    cells[idx].textContent = mark;
+    cells[idx].classList.add('disabled');
+    const w = winner(state.board);
+    if(w){
+      state.playing=false;
+      if(w.draw){
+        resultLine.innerHTML = `<span class="badge b-draw">ড্র</span> Game Draw!`;
+        state.scores.D++; renderScores(); addHistory('Draw'); save();
+      } else {
+        w.line.forEach(i=>cells[i].classList.add('win'));
+        const winName = w.mark==='X' ? (state.names.X||'X') : (state.mode.startsWith('pve')? (state.names.O||'AI') : (state.names.O||'O'));
+        resultLine.innerHTML = `<span class="badge b-win">WIN</span> ${winName} জিতেছে!`;
+        if(w.mark==='X') state.scores.X++; else state.scores.O++;
+        renderScores(); addHistory(`${winName}`); save();
+      }
+      turnWho.textContent = '—';
+      return;
+    }
+    state.xTurn=!state.xTurn;
+    turnWho.textContent = whoName();
+    if(state.playing && !state.xTurn && state.mode.startsWith('pve')){
+      // Delay a bit for realism
+      setTimeout(aiMove, 280);
+    }
+  }
+
+  function renderScores(){
+    scoreX.textContent = state.scores.X;
+    scoreO.textContent = state.scores.O;
+    scoreD.textContent = state.scores.D;
+  }
+
+  function addHistory(msg){
+    const li = document.createElement('li');
+    const t = new Date();
+    const time = t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    li.innerHTML = `<span>${msg}</span><span class="badge">${time}</span>`;
+    historyList.prepend(li);
+    const items=[...historyList.children];
+    if(items.length>20) items.pop().remove();
+  }
+
+  // Event handlers
+  themeBtn.addEventListener('click',()=>{
+    state.theme = (state.theme==='light')? 'dark':'light';
+    applyTheme(); save();
+  });
+
+  bgSelect.addEventListener('change',()=>{
+    state.bg = bgSelect.value; applyBackground(); save();
+  });
+  bgUrl.addEventListener('change',()=>{
+    state.bgImage = bgUrl.value.trim(); if(state.bg==='image') applyBackground(); save();
+  });
+
+  resetAllBtn.addEventListener('click',()=>{
+    if(confirm('Reset EVERYTHING? Scores, names, settings.')){
+      localStorage.removeItem(storeKey);
+      location.reload();
+    }
+  });
+
+  clearScoresBtn.addEventListener('click',()=>{
+    state.scores={X:0,O:0,D:0}; renderScores(); save();
+  });
+
+  startBtn.addEventListener('click',()=>{
+    const nx = nameXInput.value.trim();
+    const no = nameOInput.value.trim();
+    state.names.X = nx || 'X';
+    state.names.O = no || (modeSelect.value.startsWith('pve')? 'AI':'O');
+    state.mode = modeSelect.value;
+    setNameLabels(); save();
+    resetBoard();
+    if(!state.xTurn && state.mode.startsWith('pve')) setTimeout(aiMove, 250);
+  });
+
+  cells.forEach(cell=>{
+    cell.addEventListener('click',()=>{
+      if(!state.playing) return;
+      if(state.mode.startsWith('pve') && !state.xTurn) return; // wait AI
+      const idx = Number(cell.dataset.idx);
+      place(idx);
+    });
+  });
+
+  // Initialize UI
+  (function init(){
+    // Restore inputs
+    nameXInput.value = state.names.X==='X'? '' : state.names.X;
+    nameOInput.value = state.mode.startsWith('pve') && (!state.names.O || state.names.O==='AI')? '' : state.names.O;
+    modeSelect.value = state.mode;
+    bgSelect.value = state.bg;
+    bgUrl.value = state.bgImage || '';
+    turnWho.textContent = '—';
+    setNameLabels();
+    renderScores();
+  })();
+})();
+</script></body>
+</html>

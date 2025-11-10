@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100vh;
+      background: linear-gradient(to bottom right, #f8f9fa, #dbeafe);
+      text-align: center;
+    }
+
+    header {
+      padding: 50px 20px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      color: #374151;
+    }
+
+    footer {
+      padding: 40px;
+    }
+
+    .start-btn {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .start-btn:hover {
+      background-color: #1e40af;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome To My Tic-Tac-Teo Game Website</h1>
+    <h2>By: MD ABUSALEH SK</h2>
+    <h2>গেম খেলার নিয়ম। </h2>
+    <p>
+প্রথম ঘরে নাম লিখতে বলবে সেখানে নিজের নাম বা অন্নও কিছুর নাম দিলেও হবে। 
+তার পরের ঘরে যার সাথে গেম খেলবে তার নাম লিখতে হবে । তার পরের ঘরে তুমি মোড বদল করতে পারবে মানে খেলোয়ার 🆚 খেলোয়ার বা AI easy and hard মোড করে খেলতে পারবে। তার পরের ঘরে তুমি background এর রং বদল করতে পারবে আলাদা আলাদা ভাবে। একটা কথা যদি তুমি নিজের ছবি লাগাতে চাও তাহলে এই ঘরের পাসে একটি লিঙ্ক দেবার ঘর আছে সেখানে তুমি ছবির লিঙ্ক দিয়ে ছবি লাগাতে পারবে। তার পরে (start-restart) এই খানে ক্লিক করে খেলা শুরু করতে হবে।
+সব শেষে (reset) বাটন এ ক্লিক করে খেলা শেষ করতে হবে। এই বাটন টি সব থেকে উপরে থাকবে।  (reset) করা জরুরী।  
+    </p>
+  </header>
+  <header>
+    <h1>IN ENGLISH</h1>
+    <p>
+     Game rules.
+In the first room, you will be asked to write your name, you can write your name or the name of something.
+In the next room, you will have to write the name of the person you will play the game with. In the next room, you can change the mode, that is, player 🆚 player or AI, you can play in easy and hard mode. In the next room, you can change the background color differently. One thing, if you want to put your own picture, then there is a link box next to this room, where you can put the picture with the link of the picture. After that, you have to start the game by clicking on (start-restart).
+Finally, you have to end the game by clicking on the (reset) button. This button will be at the top. It is important to (reset). 
+    </p>
+  </header>
+  <footer>
+    <button class="start-btn" onclick="window.location.href='start.html'">
+      Start
+    </button>
+  </footer>
+</body>
+</html>
